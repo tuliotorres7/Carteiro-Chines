@@ -1,7 +1,6 @@
 library(igraph)
 library(clue)
 
-
 n <- 7 # numero de vertices
 i <- 1 # iterador
 VerImpares <- 0
@@ -14,8 +13,6 @@ m <- as.matrix(m)
 g <- graph.adjacency(m, mode ="undirected",weighted = TRUE)
 
 round(E(g)$weight,3)
-
-
 
 plot(g,edge.label=round(E(g)$weight, 3))
 
@@ -59,8 +56,6 @@ matDist <- matDist[,(-i)]
   }
 }
 
-
-
 matDist
 diag(matDist) = 1000
 plot(g)
@@ -98,29 +93,31 @@ length(caminho)
 narestas = length(E(g)$weight)
 i<-1
 degree(g,1)
+
 for(i in 1:narestas){
- i <- i+1
-    print(i)
+  #i<- i+1
+  print(i)
     viz <- neighbors(g, v)
     viz
-    #viz<- as.integer(viz)
+    #viz<- as.integer(viz)  
     qtvizinho <- length(viz)
     x <-1
-    
-    while(length(neighbors(g, v)) == qtvizinho){
+    del<-TRUE
+    while(del){
+      del<-TRUE
       plot(g)
-      #if (is_connected(g - edge(c(v,viz[x])))){
       viz[x]$name
-      viz[x]
+      v
+      plot(g)
       if (is_connected(delete.edges(g,E(g,P=c(v,viz[x]$name))))){
         plot(g)
         v
         viz[x]
-        #g <- g - edge(c(v,viz[x]))
+        
         g<- delete.edges(g,E(g,P=c(v,viz[x]$name)))
+        del<-FALSE
         plot(g)
         viz[x]
-        
         caminho[length(caminho)+1] <- viz[x]$name
         viz[x]
         caminho
@@ -130,16 +127,10 @@ for(i in 1:narestas){
         }else{
           if(x == length(viz)){
           g<- delete.edges(g,E(g,P=c(v,viz[x]$name)))
+          del<-FALSE
           plot(g)
-          
-      class(k <- viz[x]$name)
-      viz[x]$name
-      viz[x]
-      viz$name
-          
-      
-      letters[viz]
           caminho[length(caminho)+1] <- viz[x]$name
+          
           if(degree(g,v) == 0){
             print("deletaaa")
             print(g,v)
@@ -149,8 +140,8 @@ for(i in 1:narestas){
         }
       }
     x<- x + 1
+    }
     v<- caminho[length(caminho)]
-      }
 plot(g)
 caminho    
 }
