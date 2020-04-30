@@ -6,25 +6,24 @@ i <- 1 # iterador
 VerImpares <- 0
 
 gimpar <- 0
-m <- read.table(row.names=1,file = "/home/tulio/Área de Trabalho/amatrix.csv",header = TRUE, sep=',')
+m <- read.table(row.names=1,file = "/Users/Tulio/Desktop/matrix.csv",header = TRUE, sep=',')
 
 m <- as.matrix(m)
 
 g <- graph.adjacency(m, mode ="undirected",weighted = TRUE)
 
-round(E(g)$weight,3)
-
 plot(g,edge.label=round(E(g)$weight, 3))
 
-adjlist <-get.adjedgelist(g)
+
+
 dist <- distances(g)
-adj <- get.adjacency(g)
 grau <- degree(g)
+
 
 while(i <= n){  #descobrir o numero de vertices de grau impar
   if(grau[i] %% 2 == 1){
     gimpar <- gimpar + 1 
-    VerImpares[gimpar] <- i  # primeira posição no vetor é 1 nao 0
+    VerImpares[gimpar] <- i  # primeira posiÃ§Ã£o no vetor Ã© 1 nao 0
   }
   i <- i + 1
 }
@@ -36,57 +35,55 @@ for(i in VerImpares){
     matDist[i,u] <- dist[i,u] 
   }  
 }
-g <- graph.adjacency(matDist, mode ="undirected",weighted = TRUE)
-for(i in VerImpares){
-print(letters[i])
-}
 
-matDist
+
+g <- graph.adjacency(matDist, mode ="undirected",weighted = TRUE)
+
 x <- gimpar
 
 for(i in n:1){
   if( i != VerImpares[x]){
-matDist <- matDist[(-i),]
-matDist <- matDist[,(-i)]
+    matDist <- matDist[(-i),]
+    matDist <- matDist[,(-i)]
   }else{
     x<- x-1 
-        if(x==0){
-          x=1 # nao deixar o iterador chegar a 0
-  }
+    if(x==0){
+      x=1 # nao deixar o iterador chegar a 0
+    }
   }
 }
 
-matDist
-diag(matDist) = 1000
 plot(g)
+
+
+
 g <- graph.adjacency(m, mode ="undirected",weighted = TRUE)
+E(g)$color<- "blue"
+diag(matDist) = 1000
 
 t <- solve_LSAP(matDist, maximum = FALSE)
 
 t <- as.vector(t)
 
 plot(g,edge.label=round(E(g)$weight,3))
+
+
 matDist<- as.matrix(matDist)
-typeof(matDist)
+
 for( i in 1:gimpar){
   if(is.na(VerImpares[i]) == FALSE){
-  g <- add_edges(g, c(VerImpares[i],VerImpares[t[i]]))
-  
-  E(g)$weight[length(E(g)$weight)]<-matDist[i,t[i]]
-  
-  VerImpares[t[i]] = NA
-  plot(g)
+    g <- add_edges(g, c(VerImpares[i],VerImpares[t[i]]))
+    
+    E(g)$weight[length(E(g)$weight)]<-matDist[i,t[i]]
+    E(g)$color[length(E(g)$weight)]<- "red"
+    E(g)$color
+    VerImpares[t[i]] = NA
+    plot(g)
   }
 }
 
 plot(g,edge.label=round(E(g)$weight,3))
 
-#tkplot(g,edge.label=round(E(g)$weight,3))
-
-is_connected(g)
-clu <- components(g)
-print("Vertice inicial, letra")
-#v <- scan()
 v <- "a"
 caminho <- v
 length(caminho)
@@ -94,55 +91,52 @@ narestas = length(E(g)$weight)
 i<-1
 degree(g,1)
 
+
 for(i in 1:narestas){
-  #i<- i+1
-  print(i)
-    viz <- neighbors(g, v)
-    viz
-    #viz<- as.integer(viz)  
-    qtvizinho <- length(viz)
-    x <-1
+  viz <- neighbors(g, v)
+  qtvizinho <- length(viz)
+  x <-1
+  del<-TRUE
+  while(del){
     del<-TRUE
-    while(del){
-      del<-TRUE
+    V(g)$color <- "SkyBlue2"
+    V(g)[v]$color <-"Red"   
+    plot(g)
+    if (is_connected(delete.edges(g,E(g,P=c(v,viz[x]$name))))){
+      
+      E(g,P=c(v,viz[x]$name))$color<-"green"
       plot(g)
-      viz[x]$name
-      v
-      plot(g)
-      if (is_connected(delete.edges(g,E(g,P=c(v,viz[x]$name))))){
-        plot(g)
-        v
-        viz[x]
+      Sys.sleep(1)
+      g<- delete.edges(g,E(g,P=c(v,viz[x]$name)))
+      
+      del<-FALSE
+      viz[x]
+      caminho[length(caminho)+1] <- viz[x]$name
+    }else{
+      if(x == length(viz)){
         
+        
+        E(g,P=c(v,viz[x]$name))$color<-"green"
+        plot(g)
+        Sys.sleep(1)
         g<- delete.edges(g,E(g,P=c(v,viz[x]$name)))
         del<-FALSE
-        plot(g)
-        viz[x]
         caminho[length(caminho)+1] <- viz[x]$name
-        viz[x]
-        caminho
-        print("degree")
-        print(degree(g,v))
         
-        }else{
-          if(x == length(viz)){
-          g<- delete.edges(g,E(g,P=c(v,viz[x]$name)))
-          del<-FALSE
+        if(degree(g,v) == 0){
           plot(g)
-          caminho[length(caminho)+1] <- viz[x]$name
-          
-          if(degree(g,v) == 0){
-            print("deletaaa")
-            print(g,v)
-            g<-delete_vertices(g,v)
-            plot(g)
-            } 
+          Sys.sleep(2)
+          g<-delete_vertices(g,v)
+          plot(g)
+          Sys.sleep(2)
         }
       }
-    x<- x + 1
     }
-    v<- caminho[length(caminho)]
-plot(g)
-caminho    
+    x<- x + 1
+  }
+  v<- caminho[length(caminho)]
+  plot(g)
+  Sys.sleep(1)
 }
 caminho
+
